@@ -1,0 +1,78 @@
+\documentclass[12pt, twoside]{article}
+\usepackage{jmlda}
+\newcommand{\hdir}{.}
+
+\begin{document}
+
+\title
+    {Обучение с экспертом для выборки со многими доменами} % Название
+\author
+    {Н.\,А.~Линдеманн, А.\,В.~Грабовой} % основной список авторов, выводимый в оглавление
+\email
+    {lindemann.na@phystech.edu; andriy.graboviy@mail.ru}
+%\thanks
+%    {Работа выполнена при
+%     %частичной
+%     финансовой поддержке РФФИ, проекты \No\ \No 00-00-00000 и 00-00-00001.}
+%\organization
+%    {$^1$Организация, адрес; $^2$Организация, адрес}
+\abstract
+    {
+    
+Рассматривается задача аппроксимации multi-domain выборки единой мультимоделью -- смесью экспертов. В качестве данных предполагается использовать выборку, которая содержит в себе несколько доменов. Метка домена для каждого объекта отсутствует. Каждый домен аппроксимируется локальной моделью. В работе рассматривается двухэтапная задача оптимизации на основе ЕМ-алгоритма.
+    
+В качестве данных используются выборки отзывов сайта Amazon для разных типов товара. В качестве локальной модели предполагается использовать линейную модель, а в качестве признакового описания отзывов использовать tf-idf вектора внутри каждого домена.
+	
+\bigskip
+\noindent
+\textbf{Ключевые слова}: \emph {}
+
+}
+
+%данные поля заполняются редакцией журнала
+%\doi{10.21469/22233792}
+%\receivedRus{01.01.2017}
+%\receivedEng{January 01, 2017}
+
+\maketitle
+\linenumbers
+
+\section{Введение}
+to be done
+
+
+%%%% если имеется doi цитируемого источника, необходимо его указать, см. пример в \bibitem{article}
+%%%% DOI публикации, зарегистрированной в системе Crossref, можно получить по адресу http://www.crossref.org/guestquery/
+\begin{thebibliography}{99}
+
+
+ \bibitem{article}
+    \BibAuthor{A.~Nithya, C.~Lakshmi}
+   Iris Recognition Techniques: A Literature Survey~//
+    \BibJournal{International Journal of Applied Engineering Research}, 2015
+
+ \bibitem{article}
+    \BibAuthor{K.~Bowyer, K.~Hollingsworth, and P.~Flynn}
+   Image Understanding for Iris Biometrics: A Survey~//
+    \BibJournal{Computer Vision and Image Understanding}, 2008. Vol.~110. \No\,2. pp.~281--307
+	
+ \bibitem{article} 
+    \BibAuthor{K.\,A.~Gankin, A.\,N.~Gneushev, and I.\,A.~Matveev}
+   Iris image segmentation based on approximate methods
+with subsequent refinements~//
+    \BibJournal{Journal of Computer and Systems Sciences International}, 2014. Vol.~53. \No\,2. pp.~224--238.
+	\BibDoi{10.1134/S1064230714020099}.
+	
+  \bibitem{article}
+    \BibAuthor{I.\,A.~Matveev}
+   Detection of iris in image by interrelated maxima of brightness gradient projections~//
+    \BibJournal{Appl. Comput. Math.}, 2010. Vol.~9. \No\,2. pp.~252--257.
+	
+ 
+ 	
+\end{thebibliography}
+
+%%%% если имеется doi цитируемого источника, необходимо его указать, см. пример в \bibitem{article}
+%%%% DOI публикации, зарегистрированной в системе Crossref, можно получить по адресу http://www.crossref.org/guestquery/.
+
+\end{document}
