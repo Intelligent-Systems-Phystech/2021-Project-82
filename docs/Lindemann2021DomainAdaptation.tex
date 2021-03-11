@@ -44,7 +44,13 @@
 
 В работе рассматривается задача аппроксимации multi-domain выборки единой мультимоделью -- смесью экспертов, и предлагается алгоритм бинарной классификации текстов, использующий дополнительную информацию о доменах. Использование этой информации позволяет использовать более простые и интерпретируемые модели.
 
-Метод решения задачи состоит в построении мультимодели, являющейся смесью локальных моделей. Каждый домен аппроксимируется локальной линейной моделью, смесь которых является итоговым алгоритмом классификации. Задача обучения модели сводится к двухэтапной задаче оптимизации на основе ЕМ-алгоритма.
+Метод решения задачи состоит в построении мультимодели, являющейся смесью локальных моделей. Каждый домен аппроксимируется локальной линейной моделью, смесь которых является итоговым алгоритмом классификации. Задача обучения модели сводится к двухэтапной задаче оптимизации на основе ЕМ-алгоритма. Схема работы алгоритма представлена на рис.~\ref{example:1}.
+
+\begin{figure}[H]\center
+\includegraphics[width=0.5\textwidth]{1.jpg}
+\caption{Схема работы мультимодели.}
+\label{example:1}
+\end{figure}
 
 В качестве данных используется выборка отзывов сайта Amazon для разных типов товара, которая содержит в себе несколько доменов. Каждый объект имеет экспертно-зависимое описание, которое определяется его пренадлежностью к тому или иному домену. В качестве признакового описания отзывов используется tf-idf вектора внутри каждого домена. 
 
@@ -58,17 +64,17 @@
 \mathbf{f}: \mathbb{R}^n \to \{-1, +1\},
 \end{aligned}
 \]
-где $\mathbb{R}^n$ -- пространство признакового описания объектов, а $\{-1, +1\}$ -- метка класса для каждого объекта. Задачей локальной модели является апроксимация функции $\mathbf{f}$ на некотором домене. На основе общих признаков $(x_1, \ldots, x_n)$ эксперт генерирует экспертно-зависимые признаки $(x_{n+1}, \ldots, x_{m_k})$, количество которых зависит от конкретного домена, и с помощью признаков $(x_1, \ldots, x_nб x_{n+1}, \ldots, x_{m_k})$ локальная модель делает предсказание о принадлежности объекта к одному из двух классов.
+где $\mathbb{R}^n$ -- пространство признакового описания объектов, а $\{-1, +1\}$ -- метка класса объекта. Задачей локальной модели является апроксимация функции $\mathbf{f}$ на некотором домене. На основе общих признаков $(x_1, \ldots, x_n)$ эксперт генерирует экспертно-зависимые признаки $(x_{n+1}, \ldots, x_{m_k})$, количество которых зависит от конкретного домена, и с помощью признаков $(x_1, \ldots, x_nб x_{n+1}, \ldots, x_{m_k})$ локальная модель делает предсказание о принадлежности объекта к одному из двух классов.
 
 В качестве локальной модели будем использовать логистическую регрессию, которая будет предсказывать вероятность того, что объект с признаковым описанием $\vec{x_i}$ принадлежит классу $y_i$:
-\[P\left(y = y_i \mid \vec{x_i}, \vec{w}\right) = \sigma(y_i\vec{w} \cdot \vec{x_i}).\]
+\[p\left(y = y_i \mid \vec{x_i}, \mathbf{w}\right) = \sigma(y_i \mathbf{w} \cdot \vec{x_i}).\]
 
-Рассмотрим правдоподобие выборки, а именно, вероятность наблюдать данный вектор $\vec{y}$ у выборки $\textbf{C}$ (выборка размера $N$). В предположении, что объекты выборки внутри одного домена независимы и из одного распределения, получаем:
-\[P \left(\vec{y} \mid \textbf{C}, \vec{w}\right) = \prod_{i=1}^{N} P\left(y = y_i \mid \vec{x_i}, \vec{w}\right).\]
+Рассмотрим правдоподобие выборки, а именно, вероятность наблюдать данный вектор $\vec{y}$ у домена $\textbf{C}$ (выборка размера $N$). В предположении, что объекты выборки внутри одного домена независимы и из одного распределения, получим:
+\[p \left(\vec{y} \mid \textbf{C}, \mathbf{w}\right) = \prod_{i=1}^{N} p\left(y = y_i \mid \vec{x_i}, \mathbf{w}\right).\]
 Далее рассмотрим логарифм правдоподобия:
-\[\log P\left(\vec{y} \mid \textbf{C}, \vec{w}\right) = \log \prod_{i=1}^{N} \sigma(y_i\vec{w} \cdot \vec{x_i}) = \sum_{i=1}^{N} \log \frac{1}{1 + e^{-y_i\vec{w} \cdot \vec{x_i}}} = - \sum_{i=1}^{N} \log (1 + e^{-y_i\vec{w} \cdot \vec{x_i}}).\]
-Значит, в даном случае принцип максимального правдоподобия приводит к минимизации так называемой логистической функции потерь по всем объектам выборки:
-\[\mathcal{L} (\textbf{C}, \vec{y}, \vec{w}) = \sum_{i=1}^{N} \log (1 + e^{-y_i\vec{w} \cdot \vec{x_i}}) \to \min_w.\]
+\[\log p\left(\vec{y} \mid \textbf{C}, \mathbf{w}\right) = \log \prod_{i=1}^{N} \sigma(y_i \mathbf{w} \cdot \vec{x_i}) = \sum_{i=1}^{N} \log \frac{1}{1 + e^{-y_i \mathbf{w} \cdot \vec{x_i}}} = - \sum_{i=1}^{N} \log (1 + e^{-y_i \mathbf{w} \cdot \vec{x_i}}).\]
+Значит, в даном случае принцип максимального правдоподобия приводит к минимизации логистической функции потерь по всем объектам из данного домена:
+\[\mathcal{L} (\textbf{C}, \vec{y}, \mathbf{w}) = \sum_{i=1}^{N} \log (1 + e^{-y_i \mathbf{w} \cdot \vec{x_i}}) \to \min_{\mathbf{w}}.\]
 
 
 
@@ -80,7 +86,7 @@
 \textbf{C} = \bigsqcup \limits_{k=1}^{K}\textbf{C}_{k}',
 \end{aligned}
 \]
-где~$\textbf{C}_{k}'$ множество объектов, принадлежащих $k$-му домену. Множеству объекторв из домена~$\textbf{C}_{k}' \subset\textbf{C}$ соответсвует задача линейной регрессии для выборки~$\textbf{X}_{k}' \subset \textbf{X}, \textbf{y}_{k}' \subset \textbf{y}$. Модель~$\mathbf{g}_k$ аппроксимирующая выборку~$\textbf{X}_{k}', \textbf{y}_{k}'$ является локальной моделью для выборки \textbf{X}, \textbf{y}.
+где~$\textbf{C}_{k}'$ множество объектов, принадлежащих $k$-му домену. Множеству объектов из домена~$\textbf{C}_{k}' \subset\textbf{C}$ соответствует задача линейной регрессии для выборки~$\textbf{X}_{k}' \subset \textbf{X}, \textbf{y}_{k}' \subset \textbf{y}$. Модель~$\mathbf{g}_k$ аппроксимирующая выборку~$\textbf{X}_{k}', \textbf{y}_{k}'$ является локальной моделью для выборки \textbf{X}, \textbf{y}.
 
 
 \begin{definition}
@@ -100,8 +106,24 @@
 где~$\mathbf{g}_k$ является~$k$-й локальной моделью,~$\pi_k$ --- шлюзовая функция, вектор~$\mathbf{w}_k$ является параметрами~$k$-й локальной моделью, а~$\mathbf{V}$ --- параметры шлюзовой функции.
 \end{definition}
 
-В данной работе в качестве локальных моделей рассматриваются линейные модели. 
+Пусть~$\mathbf{w}_k$ является случайным вектором, который задается плотностью распределения~$p^{k}\bigr(\mathbf{w}_k\bigr)$. Получим совместное распределения параметров локальных моделей и вектора ответов:
+\[
+\label{eq:st:3}
+\begin{aligned}
+p\bigr(\mathbf{y}, \mathbf{W}|\mathbf{X}, \mathbf{V}\bigr) = \prod_{i=1}^{N}\left(\sum_{k=1}^{K}\pi_{k}p_{k}\bigr(y_i|\mathbf{w}_k, \mathbf{x}_i\bigr)\right),
+\end{aligned}
+\]
+где~$\mathbf{W} = \bigr\{\mathbf{w}_1, \mathbf{w}_2, \cdots, \mathbf{w}_K\bigr\}.$
+Оптимальные параметры находятся при помощи максимизации правдоподобия:
+\[
+\label{eq:st:4}
+\begin{aligned}
+\hat{\mathbf{V}}, \hat{ \mathbf{W}} = \arg\max_{\mathbf{V}, \mathbf{W}} p\bigr(\mathbf{y},  \mathbf{W}|\mathbf{X}, \mathbf{V}\bigr).
+\end{aligned}
+\]
 
+\section{Вычислительный эксперимент}
+В качестве первого вычислительного эксперимента использовался метод из работы~\cite{article5}.
 
 
 %%%% если имеется doi цитируемого источника, необходимо его указать, см. пример в \bibitem{article}
@@ -109,27 +131,27 @@
 \begin{thebibliography}{99}
 
 
- \bibitem{article}
+ \bibitem{article1}
     \BibAuthor{J.~Jiang}.
    A Literature Survey on Domain Adaptation of Statistical Classifiers~//
     \BibJournal{?????}, 2007 % http://www.mysmu.edu/faculty/jingjiang/papers/da_survey.pdf
     
- \bibitem{article}
+ \bibitem{article2}
     \BibAuthor{А.В.~Грабовой, В.В.~Стрижов}.
    Анализ выбора априорного распределения для смеси экспертов~//
     \BibJournal{?????}, 2018 %
 
- \bibitem{article}
+ \bibitem{article3}
     \BibAuthor{G.~Wilson, D.J.~Cook}.
    A Survey of Unsupervised Deep Domain Adaptation~//
     \BibJournal{ACM Transactions on Intelligent Systems and Technology}, 2020
     
- \bibitem{article}
+ \bibitem{article4}
     \BibAuthor{M.~Wang, W.~Deng}.
    Deep Visual Domain Adaptation: A Survey~//
     \BibJournal{Manuscript accepted by Neurocomputing}, 2018
     
- \bibitem{article}
+ \bibitem{article5}
     \BibAuthor{J.~Guo, D.J.~Shah, R.~Barzilay}.
    Multi-Source Domain Adaptation with Mixture of Experts~//
     \BibJournal{Conference on Empirical Methods in Natural Language Processing}, 2018
@@ -141,40 +163,3 @@
 %%%% DOI публикации, зарегистрированной в системе Crossref, можно получить по адресу http://www.crossref.org/guestquery/.
 
 \end{document}
-
-
-
-В качестве шлюзовой функции рассматривается двухслойный перцептрон:
-\[
-\label{eq:st:3}
-\begin{aligned}
-\mathbf{g}_k\bigr(\textbf{x}\bigr) = \textbf{w}_k^{\mathsf{T}}\textbf{x}, \quad
-\bm{\pi}\bigr(\mathbf{x}, \mathbf{V}\bigr) = \text{softmax}\bigr(\mathbf{V}_{1}^{\mathsf{T}}\bm{\sigma}\bigr(\mathbf{V}_2^{\mathsf{T}}\mathbf{x}\bigr)\bigr),
-\end{aligned}
-\]
-где~$\mathbf{V} = \bigr\{\mathbf{V}_1, \mathbf{V}_2\bigr\}$ --- множество параметров шлюзовой функции.
-
-В статье предлагается использовать вероятностный подход для описания смеси экспертов. Вводиться предположение, что~$\textbf{y}$ является случайным вектором, который задается плотностью распределения~$p\bigr(\textbf{y}|\textbf{X}\bigr)$. Предполагается, что плотность распределения~$p\bigr(\textbf{y}|\textbf{X}, \textbf{f}\bigr)$ аппроксимирует истинную плотность распределения~$p\bigr(\textbf{y}|\textbf{X}\bigr)$:
-\[
-\label{eq:st:new:1}
-\begin{aligned}
-p\bigr(\textbf{y}|\textbf{X}, \textbf{f}\bigr) = \prod_{i=1}^{N}\left(\sum_{k=1}^{K}\pi_kp_{k}\bigr(y_{i}|\textbf{g}_{k}\bigr(\mathbf{x}_{i}\bigr)\bigr)\right),
-\end{aligned}
-\]
-где~$\textbf{f}$ --- это смесь экспертов, а~$\textbf{g}_k, \bm{\pi}$ определяются выражением~\eqref{eq:st:3}.
-
-Пусть~$\textbf{w}_k$ является случайным вектором, который задается плотностью распределения~$p^{k}\bigr(\mathbf{w}_k\bigr)$. Получим совместное распределения параметров локальных моделей и вектора ответов:
-\[
-\label{eq:st:4}
-\begin{aligned}
-p\bigr(\mathbf{y}, \mathbf{W}|\mathbf{X}, \mathbf{V}\bigr) = \prod_{k=1}^{K}p^{k}\bigr(\mathbf{w}_k\bigr)\prod_{i=1}^{N}\left(\sum_{k=1}^{K}\pi_{k}p_{k}\bigr(y_i|\mathbf{w}_k, \mathbf{x}_i\bigr)\right),
-\end{aligned}
-\]
-где~$\mathbf{W} = \bigr\{\mathbf{w}_1, \mathbf{w}_2, \cdots, \mathbf{w}_K\bigr\}.$
-Оптимальные параметры находятся при помощи максимизации правдоподобия:
-\[
-\label{eq:st:5}
-\begin{aligned}
-\hat{\mathbf{V}}, \hat{ \mathbf{W}} = \arg\max_{\mathbf{V}, \mathbf{W}} p\bigr(\mathbf{y},  \mathbf{W}|\mathbf{X}, \mathbf{V}\bigr).
-\end{aligned}
-\]
