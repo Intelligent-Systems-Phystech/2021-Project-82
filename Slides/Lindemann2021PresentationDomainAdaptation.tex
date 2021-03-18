@@ -1,0 +1,123 @@
+\documentclass{beamer}
+\beamertemplatenavigationsymbolsempty
+\usecolortheme{beaver}
+\setbeamertemplate{blocks}[rounded=true, shadow=true]
+\setbeamertemplate{footline}[page number]
+%
+\usepackage[utf8]{inputenc}
+\usepackage[english,russian]{babel}
+\usepackage{amssymb,amsfonts,amsmath,mathtext}
+\usepackage{subfig}
+\usepackage[all]{xy} % xy package for diagrams
+\usepackage{array}
+\usepackage{multicol}% many columns in slide
+\usepackage{hyperref}% urls
+\usepackage{hhline}%tables
+% Your figures are here:
+\graphicspath{ {fig/} {../fig/} }
+
+%----------------------------------------------------------------------------------------------------------
+\title[\hbox to 56mm{Порождение признаков}]{Обучение с экспертом для выборки со многими доменами}
+\author[Н.\,А. Линдеманн]{Никита Алексеевич Линдеманн}
+\institute{Московский физико-технический институт}
+\date{\footnotesize
+\par\smallskip\emph{Курс:} Автоматизация научных исследований\par (практика, В.\,В.~Стрижов)/Группа 874
+\par\smallskip\emph{Эксперт:} В.\,В.~Стрижов
+\par\smallskip\emph{Консультант:} А.\,В.~Грабовой
+\par\bigskip\small 2021}
+
+%----------------------------------------------------------------------------------------------------------
+\begin{document}
+%----------------------------------------------------------------------------------------------------------
+\begin{frame}
+\thispagestyle{empty}
+\maketitle
+\end{frame}
+%-----------------------------------------------------------------------------------------------------
+\begin{frame}{Эксперимент с одной моделью}
+\small
+Выборка \scriptsize $\textbf{C} = \bigsqcup \limits_{k=1}^{K}\textbf{C}_{k}'$ \small аппроксимируется мультимоделью~$\mathbf{f}$.
+
+\scriptsize
+\[
+\begin{aligned}
+\mathbf{f} = \sum_{k=1}^{K}\pi_{k}\mathbf{g}_k\bigr(\mathbf{w}_k, \varphi_k\bigr), \hspace{5pt} \pi_{k}\bigr(\mathbf{x}, \mathbf{V}\bigr):\mathbb{R}^{n\times \left|\mathbf{V}\right|} \to [0, 1], \hspace{5pt} \sum_{k=1}^{K}\pi_{k}\bigr(\mathbf{x}, \mathbf{V}\bigr) = 1, \hspace{5pt} x_i = \varphi_k(C_i).
+\end{aligned}
+\]
+\scriptsize
+\begin{equation*}
+\begin{aligned}
+\log p\left(\textbf{y}, \textbf{W}, \textbf{Z}|\textbf{X}, \textbf{V}, \textbf{A}\right) &= \sum_{i=1}^{N}\sum_{k=1}^{K}z_{ik}\left[\log\pi_k\left(\textbf{x}_i, \textbf{V}\right) + \log p_k\left(y_i|\textbf{w}_{k}, \textbf{x}_{i}\right)\right] + \sum_{k=1}^{K}\log p^{k}\left(\textbf{w}_k|\textbf{A}_k\right)
+\end{aligned}
+\end{equation*}
+
+\begin{columns}[c]
+\column{0.6\textwidth}
+\includegraphics[width=0.8\textwidth]{Schem_1.jpg}
+\column{0.4\textwidth}
+\includegraphics[width=1.0\textwidth]{res.jpg}
+\end{columns}
+
+
+\end{frame}
+\end{document} 
+
+
+
+
+
+
+
+%----------------------------------------------------------------------------------------------------------
+\begin{frame}{Постановка задачи}
+
+\end{frame}
+%----------------------------------------------------------------------------------------------------------
+\begin{frame}{Решение}
+\begin{columns}[c]
+\column{0.6\textwidth}
+    Столбец 1
+\column{0.4\textwidth}
+    Столбец 2
+\end{columns}
+\end{frame}
+%----------------------------------------------------------------------------------------------------------
+\begin{frame}{Вычислительный эксперимент}
+
+ Что зритель видит на графике.
+
+\includegraphics[width=0.8\textwidth]{ErrorFunction}
+
+О чем говорит этот график.
+
+\end{frame}
+%----------------------------------------------------------------------------------------------------------
+\begin{frame}{Заключение}
+    \begin{block}{Перечислите ваши результаты}
+    \begin{itemize}
+        \item предложен метод,
+        \item доказана теорема.
+    \end{itemize}
+    \end{block}
+\end{frame}
+%----------------------------------------------------------------------------------------------------------
+\end{document} 
+\end{frame}
+%-----------------------------------------------------------------------------------------------------
+
+
+\end{frame}
+%----------------------------------------------------------------------------------------------------------
+\begin{frame}{���������� ������}
+\end{frame}
+%----------------------------------------------------------------------------------------------------------
+\begin{frame}{�������}
+\end{frame}
+%----------------------------------------------------------------------------------------------------------
+\begin{frame}{�������������� �����������}
+\end{frame}
+%----------------------------------------------------------------------------------------------------------
+\begin{frame}{����������}
+\end{frame}
+%----------------------------------------------------------------------------------------------------------
+\end{document} 

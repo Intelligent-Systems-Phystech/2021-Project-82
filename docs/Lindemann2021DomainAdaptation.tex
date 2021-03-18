@@ -6,6 +6,10 @@
 \newtheorem{lemma}[theorem]{Лемма}
 \newtheorem{definition}{Определение}
 
+\DeclareMathOperator{\Acc}{Accuracy}
+\DeclareMathOperator{\Precision}{Precision}
+\DeclareMathOperator{\Recall}{Recall}
+
 
 \begin{document}
 
@@ -47,12 +51,14 @@
 Метод решения задачи состоит в построении мультимодели, являющейся смесью локальных моделей. Каждый домен аппроксимируется локальной линейной моделью, смесь которых является итоговым алгоритмом классификации. Задача обучения модели сводится к двухэтапной задаче оптимизации на основе ЕМ-алгоритма. Схема работы алгоритма представлена на рис.~\ref{example:1}.
 
 \begin{figure}[H]\center
-\includegraphics[width=0.5\textwidth]{Schem_1.jpg}
+\includegraphics[width=0.5\textwidth]{fig/Schem_1.jpg}
 \caption{Схема работы мультимодели.}
 \label{example:1}
 \end{figure}
 
 В качестве данных используется выборка отзывов сайта Amazon для разных типов товара, которая содержит в себе несколько доменов. Каждый объект имеет экспертно-зависимое описание, которое определяется его пренадлежностью к тому или иному домену. В качестве признакового описания отзывов используется tf-idf вектора внутри каждого домена. 
+
+\[x_{m_k} \hspace{10pt} x_1 \hspace{10pt} x_n \hspace{10pt} x_{n+1}\]
 
 
 \section{Постановка задачи}
@@ -123,15 +129,47 @@ p\bigr(\mathbf{y}, \mathbf{W}|\mathbf{X}, \mathbf{V}\bigr) = \prod_{i=1}^{N}\lef
 \]
 
 \section{Вычислительный эксперимент}
-В качестве первого вычислительного эксперимента использовался метод из работы~\cite{article5}.
-
-Сперва выборка отзывов с сайта Amazon приводтся к признаковому описанию tf-idf вектора. Далее с помощью EM-алгоритма модель обучается в течение 15 эпох. График зависимости точности классификации на тестовом наборе данных в зависимости от номера эпохи обучения представлен на рис.~\ref{example:2}.
-
-\begin{figure}[H]\center
-\includegraphics[width=0.8\textwidth]{Graph_1.pdf}
-\caption{Зависимость точности классификации в зависимости от номера эпохи.}
-\label{example:2}
+\subsection{Анализ данных}
+Для проведения первого вычислительного эксперимента из всех отзывов с сайта Amazon были выбраны пять разных доменов: music, baby, kitchen\_\&\_housewares, software, books. Выбор именно этих доменов был  обусловлен тем, что получившаяся разнородная подвыборка содержала $9815$ и была гиперсбалансирована:
+\begin{figure}[h]
+\begin{center}
+\begin{minipage}[h]{0.4\linewidth}
+\includegraphics[width=1\linewidth]{fig/classes_dist.pdf}
+\caption{Распределение подвыборки по классам.} %% подпись к рисунку
+\end{minipage}
+\hfill
+\begin{minipage}[h]{0.4\linewidth}
+\includegraphics[width=1\linewidth]{fig/domens_dist.pdf}
+\caption{Распределение подвыборки по доменам.}
+\end{minipage}
+\end{center}
 \end{figure}
+
+Далее полученная выборка была разделена на тестовую и обучающую в пропорции $30:70$. После этого тексты отзывов были преобразованы к формату tf-idf размерности $25770$.
+
+Основными метриками, по которым мы будем оценивать качество работы модели, будут
+\[Accuracy = \frac{tp + tn}{tp + tn + fp + fn}, \hspace{10pt} Precision = \frac{tp}{tp + fp}, \hspace{10pt} Recall = \frac{tp}{tp + fn}.\]
+
+
+\subsection{Эксперимент с одной моделью}
+После подготовки данных была обучена одна модель. Эта модель представляла собой логистическую регрессию с логистической функцией потерь. Результаты обучения модели представлены на рисунках
+\begin{figure}[h]
+\begin{center}
+\begin{minipage}[h]{0.4\linewidth}
+\includegraphics[width=1\linewidth]{fig/res.jpg}
+\caption{Метрики обученной модели на тестовых данных.} %% подпись к рисунку
+\end{minipage}
+\hfill
+\begin{minipage}[h]{0.4\linewidth}
+\includegraphics[width=1\linewidth]{fig/res.jpg}
+\caption{Метрики обученной модели на обучающих данных.}
+\end{minipage}
+\end{center}
+\end{figure}
+ 
+
+\subsection{Эксперимент с мультимоделью}
+
 
 %%%% если имеется doi цитируемого источника, необходимо его указать, см. пример в \bibitem{article}
 %%%% DOI публикации, зарегистрированной в системе Crossref, можно получить по адресу http://www.crossref.org/guestquery/
@@ -170,3 +208,14 @@ p\bigr(\mathbf{y}, \mathbf{W}|\mathbf{X}, \mathbf{V}\bigr) = \prod_{i=1}^{N}\lef
 %%%% DOI публикации, зарегистрированной в системе Crossref, можно получить по адресу http://www.crossref.org/guestquery/.
 
 \end{document}
+
+\begin{figure}[H]
+\begin{minipage}[h]{0.49\linewidth}
+\center{\includegraphics[width=0.5\linewidth]{} \\ а)}
+\end{minipage}
+\hfill
+\begin{minipage}[h]{0.49\linewidth}
+\center{\includegraphics[width=0.5\linewidth]{} \\ б)}
+\end{minipage}
+\caption{Зависимость сигнала от шума для данных.}
+\end{figure}
