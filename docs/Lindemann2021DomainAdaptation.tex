@@ -14,7 +14,7 @@
 \begin{document}
 
 \title
-    {Обучение с экспертами для выборки со многими доменами} % Название
+    {Обучение экспертов для задачи прогнозирования со многими доменами} % Название
 \author
     {Н.\,А.~Линдеманн, А.\,В.~Грабовой} % основной список авторов, выводимый в оглавление
 \email
@@ -26,12 +26,12 @@
 %\organization
 %    {$^1$Организация, адрес; $^2$Организация, адрес}
 \abstract
-    {Рассматривается задача аппроксимации multi-domain выборки единой мультимоделью -- смесью экспертов. Каждый домен аппроксимируется локальной моделью. В работе рассматривается двухэтапная задача оптимизации на основе ЕМ-алгоритма. В качестве данных используется выборка отзывов сайта Amazon для разных типов товара, которая содержит в себе несколько доменов. В качестве локальной модели используется линейная модель, а в качестве признакового описания отзывов используются tf-idf вектора внутри каждого домена.
+    {Рассматривается задача аппроксимации выборки со многими доменами единой мультимоделью -- смесью экспертов. Каждый домен аппроксимируется локальной моделью. В работе рассматривается двухэтапная задача оптимизации на основе ЕМ-алгоритма. Используется выборка отзывов сайта Amazon для разных типов товара, которая содержит в себе несколько доменов. В качестве эксперта используется линейная модель, а в качестве признакового описания отзывов используются tf-idf вектора внутри каждого домена.
 
 	
 \bigskip
 \noindent
-\textbf{Ключевые слова}: \emph {Смесь экспертов, локальная модель, обучение с экспертом, классификация текстов.}
+\textbf{Ключевые слова}: \emph {Смесь экспертов, обучение экспертов, классификация текстов.}
 
 }
 
@@ -44,22 +44,19 @@
 \linenumbers
 
 \section{Введение}
-На текущий момент в машинном обучении появляется все больше задач связанных с данными, которые взяты с разных источников. Часто появляются выборки, которые состоят из большого количества доменов. Под \textit{доменом} понимается подмножество объектов выборки, которые обладают некоторыми одинаковыми признаками. На текущий момент не существует полного теоретического обоснования построения смесей локальных моделей для аппроксимации такого рода выборок. 
+На текущий момент в машинном обучении появляется все больше задач связанных с данными, которые взяты с разных источников. Часто появляются выборки, которые состоят из большого числа доменов. Под \textit{доменом} понимается подмножество объектов выборки, которые обладают некоторыми одинаковыми признаками. 
 
-В работе рассматривается задача аппроксимации multi-domain выборки единой мультимоделью -- смесью экспертов, и предлагается алгоритм бинарной классификации текстов, использующий дополнительную информацию о доменах. Использование этой информации позволяет использовать более простые и интерпретируемые модели.
+В работе рассматривается задача аппроксимации выборки со многими доменами смесью экспертов. Рассматривается задача бинарной классификации текстов, используется дополнительная информация о доменах. Прдполагается, что это позволит строить более простые и интерпретируемые модели.
 
-Метод решения задачи состоит в построении мультимодели, являющейся смесью локальных моделей. Каждый домен аппроксимируется локальной линейной моделью, смесь которых является итоговым алгоритмом классификации. Задача обучения модели сводится к двухэтапной задаче оптимизации на основе ЕМ-алгоритма. Схема работы алгоритма представлена на рис.~\ref{example:1}.
+Метод решения задачи состоит в построении мультимодели, являющейся смесью локальных моделей. Каждый домен аппроксимируется локальной линейной моделью, смесь которых является итоговым классификатором. Задача обучения модели сводится к двухэтапной задаче оптимизации на основе ЕМ-алгоритма. Схема способа построения смеси экспертов представлена на рис.~\ref{example:1}.
 
 \begin{figure}[H]\center
 \includegraphics[width=0.5\textwidth]{fig/Schem_1.jpg}
-\caption{Схема работы мультимодели.}
+\caption{Способ построения смеси экспертов.}
 \label{example:1}
 \end{figure}
 
-В качестве данных используется выборка отзывов сайта Amazon для разных типов товара, которая содержит в себе несколько доменов. Каждый объект имеет экспертно-зависимое описание, которое определяется его пренадлежностью к тому или иному домену. В качестве признакового описания отзывов используется tf-idf вектора внутри каждого домена. 
-
-\[x_{m_k} \hspace{10pt} x_1 \hspace{10pt} x_n \hspace{10pt} x_{n+1}\]
-
+Используется выборка отзывов сайта Amazon для разных типов товаров, которая содержит в себе несколько доменов. Каждый объект имеет экспертно-зависимое описание, которое определяется его пренадлежностью к тому или иному домену. В качестве признакового описания отзывов используется tf-idf вектора внутри каждого домена. 
 
 \section{Постановка задачи}
 \subsection{Постановка задачи обучнения одного эксперта}
@@ -70,7 +67,7 @@
 \mathbf{f}: \mathbb{R}^n \to \{-1, +1\},
 \end{aligned}
 \]
-где $\mathbb{R}^n$ -- пространство признакового описания объектов, а $\{-1, +1\}$ -- метка класса объекта. Задачей локальной модели является апроксимация функции $\mathbf{f}$ на некотором домене. На основе общих признаков $(x_1, \ldots, x_n)$ эксперт генерирует экспертно-зависимые признаки $(x_{n+1}, \ldots, x_{m_k})$, количество которых зависит от конкретного домена, и с помощью признаков $(x_1, \ldots, x_nб x_{n+1}, \ldots, x_{m_k})$ локальная модель делает предсказание о принадлежности объекта к одному из двух классов.
+где $\mathbb{R}^n$ -- пространство признакового описания объектов, а $\{-1, +1\}$ -- метка класса объекта. Задачей локальной модели является апроксимация функции $\mathbf{f}$ на некотором домене. На основе общих признаков $(x_1, \ldots, x_n)$ эксперт генерирует экспертно-зависимые признаки $(x_{n+1}, \ldots, x_{m_k})$, количество которых зависит от конкретного домена, и с помощью признаков $(x_1, \ldots, x_n, x_{n+1}, \ldots, x_{m_k})$ локальная модель делает предсказание о принадлежности объекта к одному из двух классов.
 
 В качестве локальной модели будем использовать логистическую регрессию, которая будет предсказывать вероятность того, что объект с признаковым описанием $\vec{x_i}$ принадлежит классу $y_i$:
 \[p\left(y = y_i \mid \vec{x_i}, \mathbf{w}\right) = \sigma(y_i \mathbf{w} \cdot \vec{x_i}).\]
@@ -148,7 +145,7 @@ p\bigr(\mathbf{y}, \mathbf{W}|\mathbf{X}, \mathbf{V}\bigr) = \prod_{i=1}^{N}\lef
 Далее полученная выборка была разделена на тестовую и обучающую в пропорции $30:70$. После этого тексты отзывов были преобразованы к формату tf-idf размерности $25770$.
 
 Основными метриками, по которым мы будем оценивать качество работы модели, будут
-\[Accuracy = \frac{tp + tn}{tp + tn + fp + fn}, \hspace{10pt} Precision = \frac{tp}{tp + fp}, \hspace{10pt} Recall = \frac{tp}{tp + fn}.\]
+\[\text{Accuracy} = \frac{\text{tp} + \text{tn}}{\text{tp} + \text{tn} + \text{fp}+ \text{fn}}, \hspace{10pt} \text{Precision} = \frac{\text{tp}}{\text{tp} + \text{fp}}, \hspace{10pt} \text{Recall} = \frac{\text{tp}}{\text{tp} + \text{fn}}.\]
 
 
 \subsection{Эксперимент с одной моделью}
@@ -170,6 +167,64 @@ p\bigr(\mathbf{y}, \mathbf{W}|\mathbf{X}, \mathbf{V}\bigr) = \prod_{i=1}^{N}\lef
 
 \subsection{Эксперимент с мультимоделью}
 
+
+\section{Анализ задачи}
+По условию задачи:
+
+$$p(\textbf{X}, \textbf{y}, \textbf{w}| \textbf{A}) = \prod_i N(\textbf{x}_i|\textbf{0}, \sigma^2 \textbf{I}_n)N(\textbf{w}|\textbf{0}, \textbf{A}^{-1})\prod_j p(y_j| \textbf{x}_j, \textbf{w}) , \eqno(1.1)$$
+где $p(y_j = 1|\textbf{x}_j, \textbf{w}) = \frac{1}{1+\exp(-\textbf{w}^{\mathsf{T}}\textbf{x}_j)}$
+
+Для простоты запишем (1.1) в следующем общем виде:
+$$p(\textbf{X}, \textbf{y}, \textbf{w}| \textbf{A}) = p(\textbf{X})p(\textbf{w}|\textbf{A})p(\textbf{y}|\textbf{X},\textbf{w}). \eqno(1.2)$$
+
+По формуле Байеса:
+$$p(\textbf{w}|\textbf{X},\textbf{y},\textbf{A}) = \frac{p(\textbf{y}|\textbf{X},\textbf{w})p(\textbf{w}|\textbf{A})}{\int_{\textbf{w}'\in \mathbb{R}^{n}} p(\textbf{y}|\textbf{X},\textbf{w}')p(\textbf{w}'|\textbf{A}) d\textbf{w}'}= \frac{\mathcal{Q}(\textbf{w})}{\int_{\textbf{w}'\in \mathbb{R}^{n}} \mathcal{Q}(\textbf{w}')}, \eqno(1.3)$$
+где введено обозначение $\mathcal{Q}(\textbf{w}) = p(\textbf{y}|\textbf{X},\textbf{w})p(\textbf{w}|\textbf{A})$.
+
+Выполним аппроксимацию Лапласа:
+$$\text{log}\mathcal{Q}(\textbf{w})\approx \text{log}\mathcal{Q}(\textbf{w}_\text{MAP}) + \nabla  \text{log}\mathcal{Q}(\textbf{w}_\text{MAP}) + \frac{1}{2}(\textbf{w}-\textbf{w}_{\text{MAP}})^{\mathsf{T}}\nabla\nabla^{\mathsf{T}}  \text{log}\mathcal{Q}(\textbf{w}_\text{MAP})(\textbf{w}-\textbf{w}_{\text{MAP}})=$$
+$$= \text{log}\mathcal{Q}(\textbf{w}_\text{MAP}) - \frac{1}{2}(\textbf{w}-\textbf{w}_{\text{MAP}})^{\mathsf{T}}\textbf{H}^{-1}(\textbf{w}-\textbf{w}_{\text{MAP}}), \eqno(1.4)$$
+где введено обозначение $\textbf{H}^{-1} = -\nabla\nabla^{\mathsf{T}}  \text{log}\mathcal{Q}(\textbf{w}_\text{MAP})$.
+
+Для нашей задачи найдем $\textbf{H}^{-1}$:
+$$\textbf{H}^{-1} = -\nabla\nabla^{\mathsf{T}}(-\frac{1}{2}\textbf{w}^{\mathsf{T}}\textbf{A}^{-1}\textbf{w} - \textbf{1}^{\mathsf{T}}\log(1+\exp(-\textbf{X}^{\mathsf{T}}\textbf{w}))) =$$
+$$= \textbf{A}^{-1} +\nabla\nabla^{\mathsf{T}}\textbf{1}^{\mathsf{T}}\log(1+\exp(-\textbf{X}^{\mathsf{T}}\textbf{w}))=$$
+$$=  \textbf{A}^{-1} +\sum_{i=1}^{m} \nabla\nabla^{\mathsf{T}}\log(1+\exp(-\textbf{x}_i^{\mathsf{T}}\textbf{w}))=$$
+$$=  \textbf{A}^{-1} +\sum_{i=1}^{m} \textbf{x}_i\textbf{x}_i^{\mathsf{T}}\frac{\exp(-\textbf{x}_i^{\mathsf{T}}\textbf{w})}{1+\exp(-\textbf{x}_i^{\mathsf{T}}\textbf{w})}-\textbf{x}_i\textbf{x}_i^{\mathsf{T}}\frac{\exp(-2\textbf{x}_i^{\mathsf{T}}\textbf{w})}{(1+\exp(-\textbf{x}_i^{\mathsf{T}}\textbf{w}))^2}. \eqno(1.5)$$
+
+Тогда получаем:
+$$\mathcal{Q}(\textbf{w}) \approx \mathcal{Q}(\textbf{w}_{\text{MAP}})\exp\left(-\frac{1}{2}(\textbf{w}-\textbf{w}_{\text{MAP}})^{\mathsf{T}}\textbf{H}^{-1}(\textbf{w}-\textbf{w}_{\text{MAP}})\right). \eqno(1.6)$$
+
+Подставляя (1.6) в (1.3) получим:
+
+$$p(\textbf{w}|\textbf{X},\textbf{y},\textbf{A}) \approx \frac{\mathcal{Q}(\textbf{w}_{\text{MAP}})\exp\left(-\frac{1}{2}(\textbf{w}-\textbf{w}_{\text{MAP}})^{\mathsf{T}}\textbf{H}^{-1}(\textbf{w}-\textbf{w}_{\text{MAP}})\right)}{\int_{\textbf{w}'\in \mathbb{R}^{n}} \mathcal{Q}(\textbf{w}_{\text{MAP}})\exp\left(-\frac{1}{2}(\textbf{w}'-\textbf{w}_{\text{MAP}})^{\mathsf{T}}\textbf{H}^{-1}(\textbf{w}'-\textbf{w}_{\text{MAP}})\right)d\textbf{w}'}=$$
+$$= \frac{\exp\left(-\frac{1}{2}(\textbf{w}-\textbf{w}_{\text{MAP}})^{\mathsf{T}}\textbf{H}^{-1}(\textbf{w}-\textbf{w}_{\text{MAP}})\right)}{\int_{\textbf{w}'\in \mathbb{R}^{n}} \exp\left(-\frac{1}{2}(\textbf{w}'-\textbf{w}_{\text{MAP}})^{\mathsf{T}}\textbf{H}^{-1}(\textbf{w}'-\textbf{w}_{\text{MAP}})\right)d\textbf{w}'} = $$
+$$ = N(\textbf{w}_{\text{MAP}}, \textbf{H}).\eqno(1.7)$$
+
+Оценим $\textbf{w}_{\text{MAP}}$:
+$$\textbf{w}_{\text{MAP}} = \argmax_{\textbf{w} \in \mathbb{R}^{n}} p(\textbf{w}|\textbf{X}, \textbf{y}, \textbf{A}) = \argmin_{\textbf{w} \in \mathbb{R}^{n}}\{-\log p(\textbf{y}|\textbf{X},\textbf{w}) - \log p(\textbf{w}|\textbf{A})\}, \eqno(1.8)$$
+где $$p(\textbf{y}|\textbf{X}, \textbf{w}) = \prod_i \hat{p}_i^{y_i}(1-\hat{p}_i)^{1-y_i}; \quad -\log p(\textbf{w}|\textbf{A}) = \frac{1}{2}\textbf{w}^{\mathsf{T}}\textbf{A}^{-1}\textbf{w}; \quad\hat{\textbf{p}} = \frac{1}{1+\exp(-\textbf{X}^{\mathsf{T}}\textbf{w})}, \eqno(1.9)$$
+
+Подставляя (1.9) в (1.8) получаем:
+$$\textbf{w}_{\text{MAP}} = \argmin_{\textbf{w} \in \mathbb{R}^{n}}\{-\textbf{y}^{\mathsf{T}}\log \hat{\textbf{p}} - (1-\textbf{y})^{\mathsf{T}}\log (1-\hat{\textbf{p}}) +\frac{1}{2}\textbf{w}^{\mathsf{T}}\textbf{A}^{-1}\textbf{w}\}=$$
+$$=\argmin_{\textbf{w} \in \mathbb{R}^{n}}\{
+-\textbf{y}^{\mathsf{T}}\log \frac{1}{1+\exp(-\textbf{X}^{\mathsf{T}}\textbf{w})}
+-(\textbf{1} - \textbf{y})^{\mathsf{T}}\log \frac{\exp(-\textbf{X}^{\mathsf{T}}\textbf{w})}{1+\exp(-\textbf{X}^{\mathsf{T}}\textbf{w})}
++\frac{1}{2}\textbf{w}^{\mathsf{T}}\textbf{A}^{-1}\textbf{w}\}\} = $$
+$$=\argmin_{\textbf{w} \in \mathbb{R}^{n}}\{
+(\textbf{1} - \textbf{y})^{\mathsf{T}}\textbf{X}^{\mathsf{T}}\textbf{w}
++\textbf{1}^{\mathsf{T}}\log(1+\exp(-\textbf{X}^{\mathsf{T}}\textbf{w}))
++\frac{1}{2}\textbf{w}^{\mathsf{T}}\textbf{A}^{-1}\textbf{w}\}, \eqno(1.10)$$
+где введя обозначения $\mathcal{L}(\textbf{w}|\textbf{X},\textbf{y},\textbf{A}) =
+(\textbf{1} - \textbf{y})^{\mathsf{T}}\textbf{X}^{\mathsf{T}}\textbf{w}
++\textbf{1}^{\mathsf{T}}\log(1+\exp(-\textbf{X}^{\mathsf{T}}\textbf{w}))
++\frac{1}{2}\textbf{w}^{\mathsf{T}}\textbf{A}^{-1}\textbf{w}$ получим следующую оптимизационую задачу для нахождения $\textbf{w}_{\text{MAP}}$:
+$$\textbf{w}_{\text{MAP}} = \argmin_{\textbf{w} \in \mathbb{R}^{n}} \mathcal{L}(\textbf{w}|\textbf{X},\textbf{y},\textbf{A}). \eqno(1.11)$$
+Данная оптимизационная задача решается с помощью градиентного спуска.
+
+
+\section{Заключение}
+На текущий момент не существует полного теоретического обоснования построения смесей локальных моделей для аппроксимации такого рода выборок. 
 
 %%%% если имеется doi цитируемого источника, необходимо его указать, см. пример в \bibitem{article}
 %%%% DOI публикации, зарегистрированной в системе Crossref, можно получить по адресу http://www.crossref.org/guestquery/
